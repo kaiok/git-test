@@ -1,0 +1,116 @@
+////////test sample
+
+    public static void printPdfTag() {
+        try (PDDocument document = new PDDocument()) {
+            // 坐标原点：左下角，x轴向右，y轴向上
+            // 定义自定义尺寸，例如10x10英寸，参数单位是像素点，1英寸=72像素点，1厘米=28.35像素点，1毫米=2.835像素点
+            PDRectangle customSize = new PDRectangle((float)(12.9 * 2.835), (float)(31.9 * 2.835));
+
+            PDPage page = new PDPage(customSize);
+            document.addPage(page);
+            // PDFBox中，默认情况下，坐标原点（0,0）位于页面的左下角。因此，当你在PDPageContentStream中输出内容时，看起来似乎是从底部往上
+            PDRectangle mediaBox = page.getMediaBox();
+            float pageHeight = mediaBox.getHeight(); // 页面高度
+            // 加载中文字体
+            PDType0Font chineseFont = PDType0Font.load(document, new File("STKAITI.TTF"));
+
+            try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
+                // 横向 女方姓名
+                printHorizontalString(page, contentStream, chineseFont, 11, "苏小红", 0, 0);
+                // 横向 男方姓名
+                printHorizontalString(page, contentStream, chineseFont, 11, "江大强", 0, 4f);
+
+
+                // 竖向 男女方姓名
+                printVerticalString(page, contentStream, chineseFont, 10, "苏小红 江大强", 1, 9);
+
+                // 竖向 女方姓名 日期
+                printVerticalString(page, contentStream, chineseFont, 10, "苏小红 03-11", 7, 12);
+            }
+
+            document.save("example.pdf");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public class pdftagprint()
+{
+ PDDocument document;
+ int width;
+ int height:
+ public pdftagprint(width, height) {
+  
+ }
+ 
+    /**
+     * 竖向
+     * @param page
+     * @param contentStream
+     * @param chineseFont
+     * @param fontSize
+     * @param text
+     * @param x
+     * @param y
+     * @throws IOException
+     */
+    public  void printVerticalString(PDPage page, PDPageContentStream contentStream, PDType0Font font, float fontSize, String text, float x, float y)
+            throws IOException {
+        PDRectangle mediaBox = page.getMediaBox();
+        float pageHeight = mediaBox.getHeight(); // 页面高度
+        float stringWidth = font.getStringWidth(text) / 1000 * fontSize;
+        float oneCharacterWidth = stringWidth / text.length();
+        contentStream.beginText();
+        contentStream.setFont(font, fontSize);
+        // 需要知道字体对应的一个字的宽度/高度(可以理解为逆时针旋转90度后的偏移量，旋转原点是右下角)
+        contentStream.setTextMatrix(0, 1, -1, 0, (float)(x*2.835) + oneCharacterWidth , pageHeight- stringWidth -(float)(y*2.835)); // 设置文本的变换矩阵为竖向
+        contentStream.showText(text);
+        contentStream.endText();
+    }
+
+
+    
+
+    /**
+     * 横向打印
+     * @param page
+     * @param contentStream
+     * @param chineseFont
+     * @param fontSize
+     * @param text
+     * @param x mm
+     * @param y mm
+     * @throws IOException
+     */
+    public  void printHorizontalString(PDPage page, PDPageContentStream contentStream, PDType0Font font, float fontSize, String text, float x, float y)
+            throws IOException {
+        PDRectangle mediaBox = page.getMediaBox();
+        float pageHeight = mediaBox.getHeight(); // 页面高度
+        float stringWidth = font.getStringWidth(text) / 1000 * fontSize;
+        float oneCharacterWidth = stringWidth / text.length();
+        contentStream.beginText();
+        contentStream.setFont(font, fontSize);
+        // 毫米转成像素点
+        contentStream.newLineAtOffset(x, pageHeight - (float)(y*2.835) - oneCharacterWidth);
+        contentStream.showText(text);
+        contentStream.endText();
+    }
+ public void print() {
+ 
+ document.save("example.pdf");
+ }
+}
+
+
+
+aa = new pdftagprint(12,30);
+aa.printHorizontalString()
+aa.printHorizontalString()
+aa.printHorizontalString()
+
+aa.print()
+
+
+
+modifytest
